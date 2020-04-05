@@ -6,9 +6,11 @@
 *.dylib
 *.db
 *.txt
+.idea/
 
 # Test binary, built with `go test -c`
 *.test
+gonotes
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
