@@ -10,6 +10,9 @@ import (
 	"strconv"
 )
 
+var home, _ = os.UserHomeDir()
+var gonotesHome = fmt.Sprintf("%s/gonotes", home)
+
 const ls = "ls"
 const rm = "rm"
 const cat = "cat"
@@ -92,7 +95,11 @@ func (env *Env) readNotes() cli.Command {
 
 func main() {
 	// Connect to DB
-	db, err := gorm.Open("sqlite3", "test.db")
+	err := os.Mkdir(gonotesHome, os.ModePerm)
+	if os.IsNotExist(err) {
+		panic(err)
+	}
+	db, err := gorm.Open("sqlite3", fmt.Sprintf("%s/notes.db", gonotesHome))
 	if err != nil {
 		panic("failed to connect database")
 	}
