@@ -3,3 +3,9 @@
   hooks:
     - id: go-fmt
     - id: go-lint
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.5.0  # Use the ref you want to point at
+    hooks:
+    - id: trailing-whitespace
+    - id: detect-private-key
+    - id: end-of-file-fixer
