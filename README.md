@@ -6,7 +6,7 @@
 # GoNotes
 Yet another minimalist kindle note reader. This time as cli tool.
 
-```shell script
+```
 NAME:
    GoNotes - Simple cli tool to manage Kindle notes
 
@@ -29,7 +29,7 @@ First parse your clippings.txt from Kindle:
 ```
 
 Then you can list your books
-```shell script
+```
 ➜ gonotes book ls
 2 | The Autobiography of Martin Luther King, Jr. (Carson, Clayborne)
 3 | Thinking, Fast and Slow (Kahneman, Daniel)
@@ -39,13 +39,13 @@ Then you can list your books
 ```
 
 and notes from single book and search using grep (!):
-```shell script
+```
 ➜ ./gonotes note cat 3 | grep tourism
 536 | tourism is about helping people construct stories and collect memories.
 ```
 
 And of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
-```shell script
+```
 ➜ ./gonotes note cat 3 | grep tourism | cowsay
  _________________________________________
 / 536 | tourism is about helping people   \
