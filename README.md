@@ -6,7 +6,7 @@
 # GoNotes
 Yet another minimalist kindle note reader. This time as cli tool.
 
-![book_list](img/list.png)
+![book_list](img/list.gif)
 
 
 ## Usage
