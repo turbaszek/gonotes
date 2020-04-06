@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 	"log"
 	"os"
@@ -15,7 +16,6 @@ var gonotesHome = fmt.Sprintf("%s/gonotes", home)
 
 const ls = "ls"
 const rm = "rm"
-const cat = "cat"
 
 func strToUint(n string) (uint, error) {
 	v, err := strconv.Atoi(n)
@@ -27,51 +27,46 @@ func strToUint(n string) (uint, error) {
 
 func (env *Env) listBooks() cli.Command {
 	return cli.Command{
-		Name:  ls,
-		Usage: "List books",
+		Name:        ls,
+		ArgsUsage:   "",
+		Description: "Lists all books",
+		Usage:       "Lists books",
 		Action: func(c *cli.Context) {
 			var books []Book
 			env.DB.Find(&books)
 			if len(books) == 0 {
 				fmt.Println("It seems you have no books yet. Try to parse clippings from your Kindle.")
+				return
 			}
-			for i := 0; i < len(books); i++ {
-				b := books[i]
-				fmt.Println(fmt.Sprintf("%d | %s", b.ID, b.Name))
+
+			templates := &promptui.SelectTemplates{
+				Inactive: "{{ .ID }} | {{ .Name }}",
+				Active:   "{{ .ID | cyan }} | {{ .Name | cyan }}",
+				Selected: "{{ .Name | bold }}",
 			}
-		},
-	}
-}
 
-func (env *Env) listNotes() cli.Command {
-	return cli.Command{
-		Name:  cat,
-		Usage: "List notes",
-		Action: func(c *cli.Context) {
-			var notes []Note
+			prompt := promptui.Select{
+				Label:     "Your books:",
+				Items:     books,
+				Templates: templates,
+				Size:      8,
+			}
 
-			bookID, err := strToUint(c.Args().First())
+			idx, _, err := prompt.Run()
 			if err != nil {
-				fmt.Println("ID of a book have to be a integer")
 				return
 			}
-			env.DB.Where(Note{bookID: bookID}).Find(&notes)
-			if len(notes) == 0 {
-				fmt.Println("No notes :<")
-				return
-			}
-			for i := 0; i < len(notes); i++ {
-				n := notes[i]
-				fmt.Println(fmt.Sprintf("%d | %s\n", n.ID, n.Text))
-			}
+			env.showNotes(books[idx].ID)
 		},
 	}
 }
 
 func (env *Env) deleteBook() cli.Command {
 	return cli.Command{
-		Name:  rm,
-		Usage: "Delete book id",
+		Name:        rm,
+		Description: "Deletes book by ID",
+		ArgsUsage:   "BOOK_ID",
+		Usage:       "Deletes a book",
 		Action: func(c *cli.Context) {
 			bookID, err := strToUint(c.Args().First())
 			if err != nil {
@@ -83,18 +78,55 @@ func (env *Env) deleteBook() cli.Command {
 	}
 }
 
-func (env *Env) readNotes() cli.Command {
+func (env *Env) showNotes(bookID uint) {
+	var notes []Note
+	env.DB.Where("book_id = ?", bookID).Find(&notes)
+	if len(notes) == 0 {
+		fmt.Println("No notes :<")
+		return
+	}
+	for i := 0; i < len(notes); i++ {
+		n := notes[i]
+		fmt.Println(fmt.Sprintf("%s\n", n.Text))
+	}
+}
+
+func (env *Env) listNotes() cli.Command {
 	return cli.Command{
-		Name:  "parse",
-		Usage: "Parses provided file",
+		Name:        "notes",
+		Description: "Lists all notes from provided book",
+		ArgsUsage:   "BOOK_ID",
+		Usage:       "List notes",
+		ShortName:   "n",
 		Action: func(c *cli.Context) {
-			env.parseFile(c.Args().First())
+			bookID, err := strToUint(c.Args().First())
+			if err != nil {
+				fmt.Println("ID of a book have to be a integer")
+				return
+			}
+			env.showNotes(bookID)
+		},
+	}
+}
+
+func (env *Env) parseNotes() cli.Command {
+	return cli.Command{
+		Name:        "parse",
+		ArgsUsage:   "FILEPATH",
+		Usage:       "Parses provided file and creates notes",
+		Description: "Parses file and writes books and notes",
+		ShortName:   "p",
+		Action: func(c *cli.Context) {
+			p := c.Args().First()
+			if p != "" {
+				env.parseFile(p)
+			}
 		},
 	}
 }
 
 func main() {
-	// Connect to DB
+	// Setup SQLite database
 	err := os.Mkdir(gonotesHome, os.ModePerm)
 	if os.IsNotExist(err) {
 		panic(err)
@@ -109,21 +141,17 @@ func main() {
 	db.AutoMigrate(&Book{}, &Note{})
 	env := &Env{DB: *db}
 
+	// CLI app
 	app := &cli.App{
-		Name:  "GoNotes",
-		Usage: "Simple cli tool to manage Kindle notes",
+		Name:        "gonotes",
+		Description: "Simple tool to manage Kindle notes",
 		Commands: []cli.Command{
-			env.readNotes(),
+			env.parseNotes(),
+			env.listNotes(),
 			{
-				Name:  "note",
-				Usage: "Notes related operations",
-				Subcommands: []cli.Command{
-					env.listNotes(),
-				},
-			},
-			{
-				Name:  "book",
-				Usage: "Books related operations",
+				Name:      "book",
+				Usage:     "Utilities to manage books",
+				ShortName: "b",
 				Subcommands: []cli.Command{
 					env.listBooks(),
 					env.deleteBook(),
@@ -131,7 +159,6 @@ func main() {
 			},
 		},
 	}
-
 	err = app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)

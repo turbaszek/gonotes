@@ -16,29 +16,29 @@ type Book struct {
 	gorm.Model
 	Name     string `gorm:"unique;not null"`
 	BookHash string `gorm:"unique;not null"`
-	Notes    []Note `gorm:"foreignkey:bookID"`
+	Notes    []Note
 }
 
 // Note is representation of a single note from kindle notes
 type Note struct {
 	gorm.Model
 	Text     string `gorm:"unique;not null"`
-	bookID   uint
 	NoteHash string
+	BookID   uint
 }
 
-func (env *Env) addBook(name string) uint {
+func (env *Env) addBook(name string) Book {
 	var book Book
 	bookHash := fmt.Sprintf("%x", sha256.Sum256([]byte(name)))
 	book = Book{Name: name, BookHash: bookHash}
 	env.DB.Unscoped().Where(book).Attrs(book).FirstOrCreate(&book)
-	return book.ID
+	return book
 }
 
 func (env *Env) addNote(text string, bookID uint) uint {
 	var note Note
 	noteHash := fmt.Sprintf("%x", sha256.Sum256([]byte(text)))
-	note = Note{Text: text, NoteHash: noteHash, bookID: bookID}
+	note = Note{Text: text, NoteHash: noteHash, BookID: bookID}
 	env.DB.Unscoped().Where(note).Attrs(note).FirstOrCreate(&note)
 	return note.ID
 }
