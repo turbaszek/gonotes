@@ -1,3 +1,8 @@
+![CI](https://github.com/turbaszek/gonotes/workflows/CI/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/turbaszek/gonotes)](https://goreportcard.com/report/github.com/turbaszek/gonotes)
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+
+
 # GoNotes
 Yet another minimalist kindle note reader. This time as cli tool.
 
