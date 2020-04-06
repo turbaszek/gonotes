@@ -24,7 +24,6 @@ func (env Env) parseFile(filePath string) {
 			log.Println(err)
 		}
 	}
-
 }
 
 func (env Env) parseAnCreateNote(rawNote string) error {
@@ -32,10 +31,10 @@ func (env Env) parseAnCreateNote(rawNote string) error {
 	if len(parts) != 4 {
 		return fmt.Errorf("failed to parse a note")
 	}
-	bookName := parts[0]
+	bookName := strings.TrimSpace(parts[0])
 	// _ := parts[1] information about note
-	text := parts[3]
-	bookID := env.addBook(bookName)
-	env.addNote(text, bookID)
+	text := strings.TrimSpace(parts[3])
+	book := env.addBook(bookName)
+	env.addNote(text, book.ID)
 	return nil
 }
