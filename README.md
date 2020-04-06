@@ -40,13 +40,13 @@ Then you can list your books
 
 and notes from single book and search using grep (!):
 ```
-➜ ./gonotes note cat 3 | grep tourism
+➜ gonotes note cat 3 | grep tourism
 536 | tourism is about helping people construct stories and collect memories.
 ```
 
 And of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
 ```
-➜ ./gonotes note cat 3 | grep tourism | cowsay
+➜ gonotes note cat 3 | grep tourism | cowsay
  _________________________________________
 / 536 | tourism is about helping people   \
 \ construct stories and collect memories. /
