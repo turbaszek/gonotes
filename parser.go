@@ -38,3 +38,32 @@ func (env Env) parseAnCreateNote(rawNote string) error {
 	env.addNote(text, book.ID)
 	return nil
 }
+
+func (env Env) removeDuplicates(bookID uint) {
+	var notes []Note
+	env.DB.Where("book_id == ?", bookID).Find(&notes)
+
+	i := 0
+	for i < len(notes) {
+		j := i + 1
+		shift := true
+		for j < len(notes) {
+			if strings.Contains(notes[j].Text, notes[i].Text) {
+				env.removeNote(notes[i].ID)
+				notes = notes[1:]
+				shift = false
+				break
+			} else {
+				if strings.Contains(notes[i].Text, notes[j].Text) {
+					env.removeNote(notes[j].ID)
+					notes[j] = notes[len(notes)-1]
+				} else {
+					j++
+				}
+			}
+		}
+		if shift {
+			i++
+		}
+	}
+}
