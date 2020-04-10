@@ -46,7 +46,7 @@ func (env *Env) listBooks() cli.Command {
 			}
 
 			prompt := promptui.Select{
-				Label:     "Your books:",
+				Label:     "Your books",
 				Items:     books,
 				Templates: templates,
 				Size:      8,
@@ -56,7 +56,7 @@ func (env *Env) listBooks() cli.Command {
 			if err != nil {
 				return
 			}
-			env.showNotes(books[idx].ID)
+			env.showNotes(books[idx].ID, true)
 		},
 	}
 }
@@ -78,7 +78,7 @@ func (env *Env) deleteBook() cli.Command {
 	}
 }
 
-func (env *Env) showNotes(bookID uint) {
+func (env *Env) showNotes(bookID uint, index bool) {
 	var notes []Note
 	env.DB.Where("book_id = ?", bookID).Find(&notes)
 	if len(notes) == 0 {
@@ -87,24 +87,48 @@ func (env *Env) showNotes(bookID uint) {
 	}
 	for i := 0; i < len(notes); i++ {
 		n := notes[i]
-		fmt.Println(fmt.Sprintf("%s\n", n.Text))
+		if index {
+			fmt.Println(fmt.Sprintf("%d) %s\n", n.ID, n.Text))
+		} else {
+			fmt.Println(fmt.Sprintf("%s\n", n.Text))
+		}
 	}
 }
 
 func (env *Env) listNotes() cli.Command {
+	var useIndex bool
 	return cli.Command{
 		Name:        "notes",
 		Description: "Lists all notes from provided book",
 		ArgsUsage:   "BOOK_ID",
 		Usage:       "List notes",
 		ShortName:   "n",
+		Flags:       []cli.Flag{cli.BoolFlag{Name: "index, id", Destination: &useIndex}},
 		Action: func(c *cli.Context) {
 			bookID, err := strToUint(c.Args().First())
 			if err != nil {
 				fmt.Println("ID of a book have to be a integer")
 				return
 			}
-			env.showNotes(bookID)
+			env.showNotes(bookID, useIndex)
+		},
+	}
+}
+
+func (env *Env) removeDuplicatesCmd() cli.Command {
+	return cli.Command{
+		Name:        "deduplicate",
+		Description: "Removes duplicated notes from provided book",
+		ArgsUsage:   "BOOK_ID",
+		Usage:       "Deduplicate notes",
+		ShortName:   "d",
+		Action: func(c *cli.Context) {
+			bookID, err := strToUint(c.Args().First())
+			if err != nil {
+				fmt.Println("ID of a book have to be a integer")
+				return
+			}
+			env.removeDuplicates(bookID)
 		},
 	}
 }
@@ -148,6 +172,7 @@ func main() {
 		Commands: []cli.Command{
 			env.parseNotes(),
 			env.listNotes(),
+			env.removeDuplicatesCmd(),
 			{
 				Name:      "book",
 				Usage:     "Utilities to manage books",
