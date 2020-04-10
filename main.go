@@ -7,6 +7,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 )
@@ -103,7 +104,9 @@ func (env *Env) listNotes() cli.Command {
 		ArgsUsage:   "BOOK_ID",
 		Usage:       "List notes",
 		ShortName:   "n",
-		Flags:       []cli.Flag{cli.BoolFlag{Name: "index, id", Destination: &useIndex}},
+		Flags: []cli.Flag{
+			cli.BoolFlag{Name: "index, id", Destination: &useIndex, Usage: "If set notes id will be included"},
+		},
 		Action: func(c *cli.Context) {
 			bookID, err := strToUint(c.Args().First())
 			if err != nil {
@@ -111,6 +114,31 @@ func (env *Env) listNotes() cli.Command {
 				return
 			}
 			env.showNotes(bookID, useIndex)
+		},
+	}
+}
+
+func (env *Env) getRandomNote() cli.Command {
+	var asQuote bool
+	return cli.Command{
+		Name:        "random",
+		Description: "Shows a random note",
+		Usage:       "Shows a random note",
+		ShortName:   "r",
+		Flags: []cli.Flag{
+			cli.BoolFlag{Name: "quote, q", Destination: &asQuote, Usage: "Include book title and author"},
+		},
+		Action: func(c *cli.Context) {
+			var notes []Note
+			env.DB.Find(&notes)
+			note := notes[rand.Intn(len(notes))]
+			if asQuote {
+				book := Book{}
+				env.DB.Find(&book, note.BookID)
+				fmt.Println(fmt.Sprintf("%s - %s ", note.Text, book.Name))
+			} else {
+				fmt.Println(note.Text)
+			}
 		},
 	}
 }
@@ -167,12 +195,13 @@ func main() {
 
 	// CLI app
 	app := &cli.App{
-		Name:        "gonotes",
-		Description: "Simple tool to manage Kindle notes",
+		Name:                 "gonotes",
+		Description:          "Simple tool to manage Kindle notes",
+		EnableBashCompletion: true,
 		Commands: []cli.Command{
 			env.parseNotes(),
 			env.listNotes(),
-			env.removeDuplicatesCmd(),
+			env.getRandomNote(),
 			{
 				Name:      "book",
 				Usage:     "Utilities to manage books",
@@ -180,6 +209,7 @@ func main() {
 				Subcommands: []cli.Command{
 					env.listBooks(),
 					env.deleteBook(),
+					env.removeDuplicatesCmd(),
 				},
 			},
 		},
