@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"crypto/sha256"
@@ -11,7 +11,7 @@ import (
 
 // Env gives an easy access to database
 type Env struct {
-	gorm.DB
+	DB *gorm.DB
 }
 
 // Book is representation of a single book from kindle notes
@@ -62,7 +62,7 @@ func (env *Env) updateNote(noteID uint, text string) {
 
 func (env *Env) removeBook(bookID uint) {
 	var book Book
-	env.First(&book, bookID)
+	env.DB.First(&book, bookID)
 	env.DB.Where("book_id = ?", bookID).Delete(Note{})
 	env.DB.Delete(&book)
 }

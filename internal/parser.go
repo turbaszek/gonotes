@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 const line string = "=========="
 
-func (env Env) parseFile(filePath string) {
+func (env *Env) parseFile(filePath string) {
 	rawContent, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Panic(err)
@@ -26,7 +26,7 @@ func (env Env) parseFile(filePath string) {
 	}
 }
 
-func (env Env) parseAnCreateNote(rawNote string) error {
+func (env *Env) parseAnCreateNote(rawNote string) error {
 	parts := strings.Split(strings.TrimSpace(rawNote), "\n")
 	if len(parts) != 4 {
 		return fmt.Errorf("failed to parse a note")
@@ -39,7 +39,7 @@ func (env Env) parseAnCreateNote(rawNote string) error {
 	return nil
 }
 
-func (env Env) removeDuplicates(bookID uint) {
+func (env *Env) removeDuplicates(bookID uint) {
 	var notes []Note
 	env.DB.Where("book_id == ?", bookID).Find(&notes)
 
