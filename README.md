@@ -6,7 +6,7 @@
 # GoNotes
 Yet another minimalist kindle note reader. This time as cli tool.
 
-![book_list](img/list.gif)
+![book_list](docs/list.gif)
 
 
 ## Usage
@@ -68,13 +68,13 @@ You can also select a random quote that will not be longer than specified number
       .( o ).
 ```
 
-## Instalation
-Currently you can install GoNotes in two ways:
-- clone the repo and then `go build .` and `go install .`
+## Installation
+Currently, you can install GoNotes in two ways:
+- clone the repo and then `go build ./cmd/gonotes` and `go install .` - this will install actual master
 - download the binary https://github.com/turbaszek/gonotes/releases/download/v0.1-alpha.1/gonotes
 
 ## Development
-Feel free to open issues and PRs. To build the project follow are usuall go steps. Consider using 
+Feel free to open issues and PRs. To build the project follow are usuall go steps. Consider using
 [pre-commits](https://pre-commit.com) for static checks and code formatting. On Mac this should do:
 ```
 brew install pre-commit
