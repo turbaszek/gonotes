@@ -74,7 +74,7 @@ To set up nice autocomplete (including book hints) run one of the following:
 # bash
 source <(gonotes complete bash)
 
-# zash
+# zsh
 source <(gonotes complete zsh)
 ```
 To persist the autocomplete behaviour add this to your `.bashrc` or `.zshrc`.
