@@ -52,6 +52,7 @@ func main() {
 			},
 			env.ShowNotesCmd(),
 			env.RandomNoteCmd(),
+			internal.CompleteCommand(),
 		},
 	}
 	err = app.Run(os.Args)
