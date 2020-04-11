@@ -48,7 +48,6 @@ func (env *Env) ShowNotesCmd() *cli.Command {
 			&cli.BoolFlag{Name: "index, id", Destination: &useIndex, Usage: "If set notes id will be included"},
 		},
 		Action: func(c *cli.Context) error {
-			println(c.Args().First())
 			// Autocomplete provides {{Book.ID}} - {{Book.Name}}
 			args := strings.Split(c.Args().First(), "-")
 			bookIDString := args[len(args)-1]
