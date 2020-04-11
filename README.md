@@ -68,6 +68,16 @@ You can also select a random quote that will not be longer than specified number
       .( o ).
 ```
 
+## Autocomplete
+To set up nice autocomplete (including book hints) run one of the following:
+```
+# ZSH
+source etc/zsh_autocomplete
+
+# BASH
+source etc/bash_autocomplete
+```
+
 ## Installation
 Currently, you can install GoNotes in two ways:
 - clone the repo and then `go build ./cmd/gonotes` and `go install .` - this will install actual master

@@ -3,22 +3,22 @@ package internal
 import (
 	"fmt"
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // ListBooksCmd list all available books
-func (env *Env) ListBooksCmd() cli.Command {
-	return cli.Command{
+func (env *Env) ListBooksCmd() *cli.Command {
+	return &cli.Command{
 		Name:        "ls",
 		ArgsUsage:   "",
 		Description: "Lists all books",
 		Usage:       "Lists books",
-		Action: func(c *cli.Context) {
+		Action: func(c *cli.Context) error {
 			var books []Book
 			env.DB.Find(&books)
 			if len(books) == 0 {
 				fmt.Println("It seems you have no books yet. Try to parse clippings from your Kindle.")
-				return
+				return nil
 			}
 
 			templates := &promptui.SelectTemplates{
@@ -36,27 +36,29 @@ func (env *Env) ListBooksCmd() cli.Command {
 
 			idx, _, err := prompt.Run()
 			if err != nil {
-				return
+				return err
 			}
 			env.showNotes(books[idx].ID, true)
+			return nil
 		},
 	}
 }
 
 // DeleteBookCmd deletes selected book by ID
-func (env *Env) DeleteBookCmd() cli.Command {
-	return cli.Command{
+func (env *Env) DeleteBookCmd() *cli.Command {
+	return &cli.Command{
 		Name:        "rm",
 		Description: "Deletes book by ID",
 		ArgsUsage:   "BOOK_ID",
 		Usage:       "Deletes a book",
-		Action: func(c *cli.Context) {
+		Action: func(c *cli.Context) error {
 			bookID, err := strToUint(c.Args().First())
 			if err != nil {
 				fmt.Println("ID of a book have to be a integer")
-				return
+				return err
 			}
 			env.removeBook(bookID)
+			return nil
 		},
 	}
 }

@@ -15,11 +15,10 @@ func (env *Env) parseFile(filePath string) {
 		log.Panic(err)
 	}
 	content := strings.TrimSpace(string(rawContent))
-
 	rawNotes := strings.Split(content, line)
 
-	for i := 0; i < len(rawNotes); i++ {
-		err := env.parseAnCreateNote(rawNotes[i])
+	for _, n := range rawNotes {
+		err := env.parseAnCreateNote(n)
 		if err != nil {
 			log.Println(err)
 		}

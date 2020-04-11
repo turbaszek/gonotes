@@ -2,8 +2,18 @@ package internal
 
 import (
 	"fmt"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
+	"strings"
 )
+
+func shortName(text string, length int) string {
+	// Changing : to - to because part after : is treated as description in cli etc
+	text = strings.ReplaceAll(text, ":", "-")
+	if len(text) > length {
+		return fmt.Sprintf("%s...", text[:length-3])
+	}
+	return text
+}
 
 func (env *Env) showNotes(bookID uint, index bool) {
 	var notes []Note
@@ -23,42 +33,59 @@ func (env *Env) showNotes(bookID uint, index bool) {
 }
 
 // ShowNotesCmd shows notes from provided book
-func (env *Env) ShowNotesCmd() cli.Command {
+func (env *Env) ShowNotesCmd() *cli.Command {
 	var useIndex bool
-	return cli.Command{
+	var books []Book
+	env.DB.Order("id desc").Find(&books)
+
+	return &cli.Command{
 		Name:        "notes",
 		Description: "Lists all notes from provided book",
 		ArgsUsage:   "BOOK_ID",
 		Usage:       "List notes",
-		ShortName:   "n",
+		Aliases:     []string{"n"},
 		Flags: []cli.Flag{
-			cli.BoolFlag{Name: "index, id", Destination: &useIndex, Usage: "If set notes id will be included"},
+			&cli.BoolFlag{Name: "index, id", Destination: &useIndex, Usage: "If set notes id will be included"},
 		},
-		Action: func(c *cli.Context) {
-			bookID, err := strToUint(c.Args().First())
+		Action: func(c *cli.Context) error {
+			println(c.Args().First())
+			// Autocomplete provides {{Book.ID}} - {{Book.Name}}
+			args := strings.Split(c.Args().First(), "-")
+			bookIDString := args[len(args)-1]
+			bookID, err := strToUint(bookIDString)
 			if err != nil {
 				fmt.Println("ID of a book have to be a integer")
-				return
+				return err
 			}
 			env.showNotes(bookID, useIndex)
+			return nil
+		},
+		BashComplete: func(c *cli.Context) {
+			// This will complete if no args are passed
+			if c.NArg() > 0 {
+				return
+			}
+			for _, b := range books {
+				fmt.Println(fmt.Sprintf("%s-%d", shortName(b.Name, 70), b.ID))
+			}
 		},
 	}
 }
 
 // RandomNoteCmd shows random note
-func (env *Env) RandomNoteCmd() cli.Command {
+func (env *Env) RandomNoteCmd() *cli.Command {
 	var asQuote bool
 	var lenLimit int
-	return cli.Command{
+	return &cli.Command{
 		Name:        "random",
 		Description: "Shows a random note",
 		Usage:       "Shows a random note",
-		ShortName:   "r",
+		Aliases:     []string{"r"},
 		Flags: []cli.Flag{
-			cli.BoolFlag{Name: "quote, q", Destination: &asQuote, Usage: "Include book title and author"},
-			cli.IntFlag{Name: "length, l", Destination: &lenLimit, Value: -1, Usage: "Limit note length to this value"},
+			&cli.BoolFlag{Name: "quote, q", Destination: &asQuote, Usage: "Include book title and author"},
+			&cli.IntFlag{Name: "length, l", Destination: &lenLimit, Value: -1, Usage: "Limit note length to this value"},
 		},
-		Action: func(c *cli.Context) {
+		Action: func(c *cli.Context) error {
 			note := env.getRandomNote(lenLimit)
 			if asQuote {
 				book := Book{}
@@ -67,42 +94,45 @@ func (env *Env) RandomNoteCmd() cli.Command {
 			} else {
 				fmt.Println(note.Text)
 			}
+			return nil
 		},
 	}
 }
 
 // RemoveDuplicatesCmd performs simple deduplication of notes within single book
-func (env *Env) RemoveDuplicatesCmd() cli.Command {
-	return cli.Command{
+func (env *Env) RemoveDuplicatesCmd() *cli.Command {
+	return &cli.Command{
 		Name:        "deduplicate",
 		Description: "Removes duplicated notes from provided book",
 		ArgsUsage:   "BOOK_ID",
 		Usage:       "Deduplicate notes",
-		ShortName:   "d",
-		Action: func(c *cli.Context) {
+		Aliases:     []string{"d"},
+		Action: func(c *cli.Context) error {
 			bookID, err := strToUint(c.Args().First())
 			if err != nil {
 				fmt.Println("ID of a book have to be a integer")
-				return
+				return err
 			}
 			env.removeDuplicates(bookID)
+			return nil
 		},
 	}
 }
 
 // ParseNotesCmd parses provided Kindle clippings into books and notes
-func (env *Env) ParseNotesCmd() cli.Command {
-	return cli.Command{
+func (env *Env) ParseNotesCmd() *cli.Command {
+	return &cli.Command{
 		Name:        "parse",
 		ArgsUsage:   "FILEPATH",
 		Usage:       "Parses provided file and creates notes",
 		Description: "Parses file and writes books and notes",
-		ShortName:   "p",
-		Action: func(c *cli.Context) {
+		Aliases:     []string{"p"},
+		Action: func(c *cli.Context) error {
 			p := c.Args().First()
 			if p != "" {
 				env.parseFile(p)
 			}
+			return nil
 		},
 	}
 }
