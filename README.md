@@ -71,12 +71,13 @@ You can also select a random quote that will not be longer than specified number
 ## Autocomplete
 To set up nice autocomplete (including book hints) run one of the following:
 ```
-# ZSH
-source etc/zsh_autocomplete
+# bash
+source <(gonotes complete bash)
 
-# BASH
-source etc/bash_autocomplete
+# zash
+source <(gonotes complete zsh)
 ```
+To persist the autocomplete behaviour add this to your `.bashrc` or `.zshrc`.
 
 ## Installation
 Currently, you can install GoNotes in two ways:
