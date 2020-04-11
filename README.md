@@ -36,7 +36,7 @@ You can display notes from single book and search using grep (!):
 tourism is about helping people construct stories and collect memories.
 ```
 
-And of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
+Of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
 ```
 ➜ gonotes n 12 | grep "personal growth" | cowsay
  ______________________________________
@@ -45,6 +45,23 @@ And of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
 | and poor decision making into a      |
 \ virtuous cycle of personal growth.   /
  --------------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+You can also select a random quote that will not be longer than specified number of words
+```
+➜ gonotes r -q -l 15 | cowsay
+ _______________________________________
+/ People overestimate the probabilities \
+| of unlikely events. People overweight |
+| unlikely events in their decisions. - |
+| Thinking, Fast and Slow (Kahneman,    |
+\ Daniel)                               /
+ ---------------------------------------
         \   ^__^
          \  (oo)\_______
             (__)\       )\/\
