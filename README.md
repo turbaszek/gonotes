@@ -54,17 +54,16 @@ Of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
 
 You can also select a random quote that will not be longer than specified number of words
 ```
-➜ gonotes r -q -l 15 | cowsay
- _______________________________________
-/ People overestimate the probabilities \
-| of unlikely events. People overweight |
-| unlikely events in their decisions. - |
-| Thinking, Fast and Slow (Kahneman,    |
-\ Daniel)                               /
- ---------------------------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
+➜ gonotes r -q -l 15 | cowsay -f bunny
+ ________________________________________
+/ Hate is just as injurious to the hater \
+| as it is to the hated. - The           |
+| Autobiography of Martin Luther King,   |
+\ Jr. (Carson, Clayborne)                /
+ ----------------------------------------
+  \
+   \   \
+        \ /\
+        ( )
+      .( o ).
 ```
