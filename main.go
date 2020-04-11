@@ -7,7 +7,6 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 	"log"
-	"math/rand"
 	"os"
 	"strconv"
 )
@@ -118,8 +117,9 @@ func (env *Env) listNotes() cli.Command {
 	}
 }
 
-func (env *Env) getRandomNote() cli.Command {
+func (env *Env) randomNoteCmd() cli.Command {
 	var asQuote bool
+	var lenLimit int
 	return cli.Command{
 		Name:        "random",
 		Description: "Shows a random note",
@@ -127,11 +127,10 @@ func (env *Env) getRandomNote() cli.Command {
 		ShortName:   "r",
 		Flags: []cli.Flag{
 			cli.BoolFlag{Name: "quote, q", Destination: &asQuote, Usage: "Include book title and author"},
+			cli.IntFlag{Name: "length, l", Destination: &lenLimit, Value: -1, Usage: "Limit note length to this value"},
 		},
 		Action: func(c *cli.Context) {
-			var notes []Note
-			env.DB.Find(&notes)
-			note := notes[rand.Intn(len(notes))]
+			note := env.getRandomNote(lenLimit)
 			if asQuote {
 				book := Book{}
 				env.DB.Find(&book, note.BookID)
@@ -201,7 +200,7 @@ func main() {
 		Commands: []cli.Command{
 			env.parseNotes(),
 			env.listNotes(),
-			env.getRandomNote(),
+			env.randomNoteCmd(),
 			{
 				Name:      "book",
 				Usage:     "Utilities to manage books",

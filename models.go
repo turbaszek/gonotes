@@ -4,6 +4,9 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"math/rand"
+	"strings"
+	"time"
 )
 
 // Env gives an easy access to database
@@ -66,4 +69,22 @@ func (env *Env) removeBook(bookID uint) {
 
 func (env *Env) removeNote(noteID uint) {
 	env.DB.Delete(&Note{}, noteID)
+}
+
+func (env *Env) getRandomNote(lenLimit int) Note {
+	var notes []Note
+	env.DB.Find(&notes)
+	if lenLimit > 0 {
+		var selectedNotes []Note
+		for i := 0; i < len(notes); i++ {
+			n := notes[i]
+			if len(strings.Split(n.Text, " ")) <= lenLimit {
+				selectedNotes = append(selectedNotes, n)
+			}
+		}
+		notes = selectedNotes
+	}
+	s := rand.NewSource(time.Now().UnixNano())
+	idx := rand.New(s).Intn(len(notes))
+	return notes[idx]
 }
