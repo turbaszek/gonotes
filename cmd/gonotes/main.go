@@ -36,23 +36,23 @@ func main() {
 	app := &cli.App{
 		Name:                 appName,
 		Version:              version,
-		Description:          "Simple tool to manage Kindle notes",
+		Usage:                "Simple tool to manage Kindle notes",
 		EnableBashCompletion: true,
 		Commands: []*cli.Command{
-			env.ParseNotesCmd(),
+			env.NewParseNotesCmd(),
 			{
 				Name:    "book",
 				Usage:   "Utilities to manage books",
 				Aliases: []string{"b"},
 				Subcommands: []*cli.Command{
-					env.ListBooksCmd(),
-					env.DeleteBookCmd(),
-					env.RemoveDuplicatesCmd(),
+					env.NewListBooksCmd(),
+					env.NewDeleteBookCmd(),
+					env.NewRemoveDuplicatesCmd(),
 				},
 			},
-			env.ShowNotesCmd(),
-			env.RandomNoteCmd(),
-			internal.CompleteCommand(),
+			env.NewShowNotesCmd(),
+			env.NewRandomNoteCmd(),
+			internal.NewCompleteCommand(),
 		},
 	}
 	err = app.Run(os.Args)

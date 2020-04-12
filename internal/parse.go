@@ -2,12 +2,31 @@ package internal
 
 import (
 	"fmt"
+	"github.com/urfave/cli/v2"
 	"io/ioutil"
 	"log"
 	"strings"
 )
 
 const line string = "=========="
+
+// NewParseNotesCmd parses provided Kindle clippings into books and notes
+func (env *Env) NewParseNotesCmd() *cli.Command {
+	return &cli.Command{
+		Name:        "parse",
+		ArgsUsage:   "FILEPATH",
+		Usage:       "Parses provided file and creates books and notes",
+		Description: "Parses file and writes books and notes",
+		Aliases:     []string{"p"},
+		Action: func(c *cli.Context) error {
+			p := c.Args().First()
+			if p != "" {
+				env.parseFile(p)
+			}
+			return nil
+		},
+	}
+}
 
 func (env *Env) parseFile(filePath string) {
 	rawContent, err := ioutil.ReadFile(filePath)
@@ -36,33 +55,4 @@ func (env *Env) parseAnCreateNote(rawNote string) error {
 	book := env.addBook(bookName)
 	env.addNote(text, book.ID)
 	return nil
-}
-
-func (env *Env) removeDuplicates(bookID uint) {
-	var notes []Note
-	env.DB.Where("book_id == ?", bookID).Find(&notes)
-
-	i := 0
-	for i < len(notes) {
-		j := i + 1
-		shift := true
-		for j < len(notes) {
-			if strings.Contains(notes[j].Text, notes[i].Text) {
-				env.removeNote(notes[i].ID)
-				notes = notes[1:]
-				shift = false
-				break
-			} else {
-				if strings.Contains(notes[i].Text, notes[j].Text) {
-					env.removeNote(notes[j].ID)
-					notes[j] = notes[len(notes)-1]
-				} else {
-					j++
-				}
-			}
-		}
-		if shift {
-			i++
-		}
-	}
 }
