@@ -4,6 +4,7 @@
 
 # GoNotes
 Kindle note reader in cli version!
+
 ![book_list](docs/list.gif)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
