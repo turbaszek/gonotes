@@ -109,7 +109,7 @@ your `.bashrc` or `.zshrc`.
 ## Installation
 Currently, you can install GoNotes in two ways:
 - clone the repo and then `go build ./cmd/gonotes` and `go install .` - this will install actual master
-- download the binary https://github.com/turbaszek/gonotes/releases/download/v0.1-alpha2/gonotes
+- download the binary https://github.com/turbaszek/gonotes/releases/download/v0.1-alpha.2/gonotes
 
 ## Development
 Feel free to open issues and PRs. To build the project follow are usuall go steps. Consider using
