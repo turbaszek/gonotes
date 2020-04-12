@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-const version = "v0.0.1"
+const version = "v0.1"
 const appName = "gonotes"
 
 var home, _ = os.UserHomeDir()
