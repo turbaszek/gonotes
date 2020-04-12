@@ -9,3 +9,18 @@
     - id: trailing-whitespace
     - id: detect-private-key
     - id: end-of-file-fixer
+- repo: https://github.com/thlorenz/doctoc.git
+  rev: v1.4.0
+  hooks:
+    - id: doctoc
+      name: Add TOC for md files
+      files: ^README\.md$
+      args:
+        - "--maxlevel"
+        - "2"
+- repo: local
+  hooks:
+    - id: update-help-in-readme
+      name: Update output of breeze command in BREEZE.rst
+      entry: "./scripts/generate_cli_help.sh"
+      language: system

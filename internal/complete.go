@@ -5,8 +5,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// CompleteCommand sets autocomplete for GoNotes
-func CompleteCommand() *cli.Command {
+// NewCompleteCommand sets autocomplete for GoNotes
+func NewCompleteCommand() *cli.Command {
 	return &cli.Command{
 		Name:      "complete",
 		Usage:     "Setup autocomplete",
