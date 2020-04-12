@@ -24,3 +24,4 @@
       name: Update output of breeze command in BREEZE.rst
       entry: "./scripts/generate_cli_help.sh"
       language: system
+      files: ^.*\.go$

@@ -3,7 +3,7 @@
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 # GoNotes
-Kindle note reader in cli version!
+Command line tool to manage and search your Kindle clippings in an easy way!
 
 ![book_list](docs/list.gif)
 
@@ -20,24 +20,25 @@ Kindle note reader in cli version!
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Usage
-First parse your clippings.txt from Kindle:
+Parse your clippings files from Kindle:
 ```
-➜ gonotes parse clippings.txt
+➜ gonotes parse /path/to/your/clippings.txt
 ```
 
-Then you can list notes from a book, press tab use autocomplete
+Then you can list notes from a book. Press tab use autocomplete
 (check how to [enable](#autocomplete) it):
 ```
-➜ ./gonotes notes 8
+➜ ./gonotes notes 8  # shows notes from book with ID 8
 ```
 
-You can display notes from single book and search using grep (!):
+You can display notes from single book and **search using grep**:
 ```
 ➜ gonotes notes 3 | grep tourism
 tourism is about helping people construct stories and collect memories.
 ```
 
-Of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
+Remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay) to share your
+favourite quotes!
 ```
 ➜ gonotes n 12 | grep "personal growth" | cowsay
  ______________________________________
@@ -53,7 +54,8 @@ Of course remember to use [cowsay](https://en.wikipedia.org/wiki/Cowsay)!
                 ||     ||
 ```
 
-There's also possibility to get a random quote that will not be longer than specified number of words
+There's also possibility to get a random quote that will be no longer
+than specified number of words
 ```
 ➜ gonotes r -q -l 15 | cowsay -f bunny
  ________________________________________
