@@ -79,7 +79,7 @@ There's also possibility to get a random quote that will not be longer than spec
      gonotes [global options] command [command options] [arguments...]
 
   VERSION:
-     v0.0.1
+     v0.1
 
   COMMANDS:
      parse, p   Parses provided file and creates books and notes
