@@ -28,7 +28,7 @@ Parse your clippings files from Kindle:
 Then you can list notes from a book. Press tab use autocomplete
 (check how to [enable](#autocomplete) it):
 ```
-➜ ./gonotes notes 8  # shows notes from book with ID 8
+➜ gonotes notes 8  # shows notes from book with ID 8
 ```
 
 You can display notes from single book and **search using grep**:
