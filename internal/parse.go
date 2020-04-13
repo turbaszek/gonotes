@@ -33,7 +33,7 @@ func (env *Env) parseFile(filePath string) {
 	if err != nil {
 		log.Panic(err)
 	}
-	content := strings.TrimSpace(string(rawContent))
+	content := strings.TrimSpace(string(rawContent[:]))
 	rawNotes := strings.Split(content, line)
 
 	for _, n := range rawNotes {
@@ -46,13 +46,37 @@ func (env *Env) parseFile(filePath string) {
 
 func (env *Env) parseAnCreateNote(rawNote string) error {
 	parts := strings.Split(strings.TrimSpace(rawNote), "\n")
-	if len(parts) != 4 {
-		return fmt.Errorf("failed to parse a note")
+	l := len(parts)
+	if l < 4 {
+		return nil // skip when note's text is empty
 	}
-	bookName := strings.TrimSpace(parts[0])
+	if l > 4 {
+		return fmt.Errorf("failed to parse a note. Had %d lines, expected 4", l)
+	}
+	bookName := trimText(parts[0])
 	// _ := parts[1] information about note
-	text := strings.TrimSpace(parts[3])
+	text := trimText(parts[3])
 	book := env.addBook(bookName)
 	env.addNote(text, book.ID)
 	return nil
+}
+
+// It seems that sometimes book titles starts with strange symbols that
+// may result in duplication of a book. It's hard to spot because reading
+// it from database shows same string.
+func isStrangeRune(r rune) bool {
+	excluded := []rune{
+		65279, // U+00EF Latin small letter i, diaeresis
+	}
+	for _, x := range excluded {
+		if r == x {
+			return true
+		}
+	}
+	return false
+}
+func trimText(text string) string {
+	text = strings.TrimSpace(text)
+	text = strings.TrimLeftFunc(text, isStrangeRune)
+	return text
 }
