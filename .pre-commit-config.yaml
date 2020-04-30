@@ -21,7 +21,7 @@
 - repo: local
   hooks:
     - id: update-help-in-readme
-      name: Update output of breeze command in BREEZE.rst
+      name: Update help in README.md
       entry: "./scripts/generate_cli_help.sh"
       language: system
       files: ^.*\.go$
