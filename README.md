@@ -75,7 +75,9 @@ than specified number of words
 <!-- AUTO_STAR -->
 ```
   NAME:
-     gonotes - Simple tool to manage Kindle notes
+     gonotes - manage your Kindle notes.
+
+     For more information check https://github.com/turbaszek/gonotes
 
   USAGE:
      gonotes [global options] command [command options] [arguments...]

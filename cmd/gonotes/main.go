@@ -12,6 +12,7 @@ import (
 
 const version = "v0.1"
 const appName = "gonotes"
+const appUsage = "manage your Kindle notes.\n\n   For more information check https://github.com/turbaszek/gonotes"
 
 var home, _ = os.UserHomeDir()
 var goNotesHome = fmt.Sprintf("%s/gonotes", home)
@@ -36,7 +37,7 @@ func main() {
 	app := &cli.App{
 		Name:                 appName,
 		Version:              version,
-		Usage:                "Simple tool to manage Kindle notes",
+		Usage:                appUsage,
 		EnableBashCompletion: true,
 		Commands: []*cli.Command{
 			env.NewParseNotesCmd(),
