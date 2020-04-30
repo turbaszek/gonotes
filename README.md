@@ -100,18 +100,20 @@ than specified number of words
 To set up autocomplete including book hints run one of the following:
 ```
 # bash
-source <(gonotes complete bash)
+source <(gonotes completion bash)
 
 # zsh
-source <(gonotes complete zsh)
+source <(gonotes completion zsh)
 ```
 To persist the autocomplete behaviour add this selected option to
 your `.bashrc` or `.zshrc`.
 
 ## Installation
 Currently, you can install GoNotes in two ways:
-- clone the repo and then `go build ./cmd/gonotes` and `go install .` - this will install actual master
-- download the binary https://github.com/turbaszek/gonotes/releases/download/v0.1-alpha.2/gonotes
+- clone the repo and then `go install ./cmd/gonotes` - this will install actual master
+- download the binary:
+    ```
+    curl -L https://github.com/turbaszek/gonotes/releases/download/v0.1-alpha.2/gonotes -o /usr/local/bin/gonotes && chmod +x /usr/local/bin/gonotes```
 
 ## Development
 Feel free to open issues and PRs. To build the project follow are usuall go steps. Consider using

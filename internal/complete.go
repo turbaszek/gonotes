@@ -8,7 +8,7 @@ import (
 // NewCompleteCommand sets autocomplete for GoNotes
 func NewCompleteCommand() *cli.Command {
 	return &cli.Command{
-		Name:      "complete",
+		Name:      "completion",
 		Usage:     "Setup autocomplete",
 		ArgsUsage: "SHELL",
 		Hidden:    true,
