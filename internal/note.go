@@ -63,7 +63,7 @@ func (env *Env) NewRandomNoteCmd() *cli.Command {
 				env.DB.Find(&book, note.BookID)
 				bookName = book.Name
 			}
-			fmt.Println(env.getFormattedNoteText(note, false, bookName))
+			fmt.Println(getFormattedNoteText(note, false, bookName))
 			return nil
 		},
 	}
@@ -86,18 +86,21 @@ func (env *Env) showNotes(bookID uint, index bool, asQuote bool) {
 
 	for i := 0; i < len(notes); i++ {
 		n := notes[i]
-		text := env.getFormattedNoteText(n, index, bookName)
+		text := getFormattedNoteText(n, index, bookName)
 		fmt.Printf("%s\n", text)
 	}
 }
 
-func (env *Env) getFormattedNoteText(note Note, index bool, quoteEnvelopeText string) string {
+func getFormattedNoteText(note Note, index bool, quoteEnvelopeText string) string {
 	text := note.Text
-	if index {
-		text = fmt.Sprintf("%d) %s\n", note.ID, text)
-	}
+
 	if len(quoteEnvelopeText) > 0 {
 		text = fmt.Sprintf(fmt.Sprintf("\"%s\" - %s", text, quoteEnvelopeText))
 	}
+
+	if index {
+		text = fmt.Sprintf("%d) %s", note.ID, text)
+	}
+
 	return text
 }
