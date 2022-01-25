@@ -56,14 +56,10 @@ func (env *Env) NewRandomNoteCmd() *cli.Command {
 			&cli.IntFlag{Name: "length", Aliases: []string{"l"}, Destination: &lenLimit, Value: -1, Usage: "Limit note length to this value"},
 		},
 		Action: func(c *cli.Context) error {
+			var book Book
 			note := env.getRandomNote(lenLimit)
-			bookName := ""
-			if asQuote {
-				book := Book{}
-				env.DB.Find(&book, note.BookID)
-				bookName = book.Name
-			}
-			fmt.Println(getFormattedNoteText(note, false, bookName))
+			env.DB.Find(&book, note.BookID)
+			fmt.Println(getFormattedNoteText(note, book, false, asQuote))
 			return nil
 		},
 	}
@@ -71,36 +67,26 @@ func (env *Env) NewRandomNoteCmd() *cli.Command {
 
 func (env *Env) showNotes(bookID uint, index bool, asQuote bool) {
 	var notes []Note
-	var bookName = ""
-	env.DB.Where("book_id = ?", bookID).Find(&notes)
+	var book Book
+	env.DB.Find(&book, bookID).Related(&notes)
 	if len(notes) == 0 {
 		fmt.Println("No notes :<")
 		return
 	}
 
-	if asQuote {
-		var book Book
-		env.DB.Find(&book, bookID)
-		bookName = book.Name
-	}
-
-	for i := 0; i < len(notes); i++ {
-		n := notes[i]
-		text := getFormattedNoteText(n, index, bookName)
+	for _, n := range notes {
+		text := getFormattedNoteText(n, book, index, asQuote)
 		fmt.Printf("%s\n", text)
 	}
 }
 
-func getFormattedNoteText(note Note, index bool, quoteEnvelopeText string) string {
+func getFormattedNoteText(note Note, book Book, index bool, asQuote bool) string {
 	text := note.Text
-
-	if len(quoteEnvelopeText) > 0 {
-		text = fmt.Sprintf(fmt.Sprintf("\"%s\" - %s", text, quoteEnvelopeText))
+	if asQuote {
+		text = fmt.Sprintf(fmt.Sprintf("\"%s\" - %s", text, book.Name))
 	}
-
 	if index {
 		text = fmt.Sprintf("%d) %s", note.ID, text)
 	}
-
 	return text
 }
