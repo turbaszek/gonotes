@@ -12,24 +12,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-      - uses: actions/setup-go@v2-beta
         with:
-          go-version: 1.13
+          persist-credentials: false
+      - uses: actions/setup-python@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
       - name: install go-lint
         run: |
           go get -u golang.org/x/lint/golint
           export PATH=$PATH:$(go list -f {{.Target}} golang.org/x/lint/golint)
-      - uses: pre-commit/action@v1.0.1
+      - uses: pre-commit/action@v2.0.3
 
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2-beta
+      - uses: actions/setup-go@v2
         with:
-          go-version: 1.13
+          go-version: 1.17
       - name: Get dependencies
         run: "go get -v -t -d ./..."
       - name: Build
