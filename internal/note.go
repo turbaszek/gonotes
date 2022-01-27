@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-func newQuoteFlag(dest bool) *cli.BoolFlag {
+func newQuoteFlag(dest *bool) *cli.BoolFlag {
 	return &cli.BoolFlag{
-		Name: "quote", Aliases: []string{"q"}, Destination: &dest, Usage: "Include book title and author",
+		Name: "quote", Aliases: []string{"q"}, Destination: dest, Usage: "Include book title and author",
 	}
 }
 
@@ -23,7 +23,7 @@ func (env *Env) NewShowNotesCmd() *cli.Command {
 		Usage:       "List notes",
 		Aliases:     []string{"n"},
 		Flags: []cli.Flag{
-			newQuoteFlag(asQuote),
+			newQuoteFlag(&asQuote),
 			&cli.BoolFlag{Name: "index, id", Destination: &useIndex, Usage: "If set notes id will be included"},
 		},
 		Action: func(c *cli.Context) error {
@@ -35,7 +35,7 @@ func (env *Env) NewShowNotesCmd() *cli.Command {
 				fmt.Println("ID of a book have to be a integer")
 				return err
 			}
-			env.showNotes(bookID, useIndex)
+			env.showNotes(bookID, useIndex, asQuote)
 			return nil
 		},
 		BashComplete: env.booksComplete,
@@ -52,36 +52,41 @@ func (env *Env) NewRandomNoteCmd() *cli.Command {
 		Usage:       "Shows a random note",
 		Aliases:     []string{"r"},
 		Flags: []cli.Flag{
-			newQuoteFlag(asQuote),
+			newQuoteFlag(&asQuote),
 			&cli.IntFlag{Name: "length", Aliases: []string{"l"}, Destination: &lenLimit, Value: -1, Usage: "Limit note length to this value"},
 		},
 		Action: func(c *cli.Context) error {
+			var book Book
 			note := env.getRandomNote(lenLimit)
-			if asQuote {
-				book := Book{}
-				env.DB.Find(&book, note.BookID)
-				fmt.Println(fmt.Sprintf("%s - %s ", note.Text, book.Name))
-			} else {
-				fmt.Println(note.Text)
-			}
+			env.DB.Find(&book, note.BookID)
+			fmt.Println(getFormattedNoteText(note, book, false, asQuote))
 			return nil
 		},
 	}
 }
 
-func (env *Env) showNotes(bookID uint, index bool) {
+func (env *Env) showNotes(bookID uint, index bool, asQuote bool) {
 	var notes []Note
-	env.DB.Where("book_id = ?", bookID).Find(&notes)
+	var book Book
+	env.DB.Find(&book, bookID).Related(&notes)
 	if len(notes) == 0 {
 		fmt.Println("No notes :<")
 		return
 	}
-	for i := 0; i < len(notes); i++ {
-		n := notes[i]
-		if index {
-			fmt.Printf("%d) %s\n", n.ID, n.Text)
-		} else {
-			fmt.Printf("%s\n", n.Text)
-		}
+
+	for _, n := range notes {
+		text := getFormattedNoteText(n, book, index, asQuote)
+		fmt.Printf("%s\n", text)
 	}
+}
+
+func getFormattedNoteText(note Note, book Book, index bool, asQuote bool) string {
+	text := note.Text
+	if asQuote {
+		text = fmt.Sprintf(fmt.Sprintf("\"%s\" - %s", text, book.Name))
+	}
+	if index {
+		text = fmt.Sprintf("%d) %s", note.ID, text)
+	}
+	return text
 }
