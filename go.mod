@@ -1,10 +1,15 @@
 module github.com/turbaszek/gonotes
 
-go 1.13
+go 1.17
 
 require (
-	github.com/jinzhu/gorm v1.9.11
-	github.com/urfave/cli/v2 v2.2.0
-	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
-	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+	github.com/jinzhu/gorm v1.9.16
+	github.com/urfave/cli/v2 v2.3.0
+)
+
+require (
+	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.10 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 )
